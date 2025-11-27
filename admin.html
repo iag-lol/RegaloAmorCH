@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Panel Administrativo | Regalo Amor</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-container">
+            <div class="login-logo">
+                <i class="fas fa-gift"></i>
+                <h1>Regalo Amor</h1>
+                <p>Panel Administrativo</p>
+            </div>
+            <form class="login-form" id="loginForm">
+                <div class="form-group">
+                    <label for="adminEmail">Email</label>
+                    <input type="email" id="adminEmail" required placeholder="admin@regaloamor.cl">
+                </div>
+                <div class="form-group">
+                    <label for="adminPassword">Contrasena</label>
+                    <input type="password" id="adminPassword" required placeholder="********">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-sign-in-alt"></i> Ingresar
+                </button>
+            </form>
+            <p class="login-hint">Demo: admin@regaloamor.cl / admin123</p>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div class="admin-wrapper" id="adminWrapper" style="display: none;">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-gift"></i>
+                    <span>Regalo Amor</span>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item active" data-section="dashboard">
+                        <a href="#"><i class="fas fa-home"></i> <span>Dashboard</span></a>
+                    </li>
+                    <li class="nav-item" data-section="orders">
+                        <a href="#"><i class="fas fa-shopping-bag"></i> <span>Pedidos</span>
+                            <span class="badge" id="pendingOrdersBadge">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-section="products">
+                        <a href="#"><i class="fas fa-box"></i> <span>Productos</span></a>
+                    </li>
+                    <li class="nav-item" data-section="categories">
+                        <a href="#"><i class="fas fa-tags"></i> <span>Categorias</span></a>
+                    </li>
+                    <li class="nav-item" data-section="reviews">
+                        <a href="#"><i class="fas fa-star"></i> <span>Resenas</span>
+                            <span class="badge" id="pendingReviewsBadge">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-section="customers">
+                        <a href="#"><i class="fas fa-users"></i> <span>Clientes</span></a>
+                    </li>
+                    <li class="nav-item" data-section="analytics">
+                        <a href="#"><i class="fas fa-chart-line"></i> <span>Analiticas</span></a>
+                    </li>
+                    <li class="nav-item" data-section="sii">
+                        <a href="#"><i class="fas fa-file-invoice-dollar"></i> <span>SII / IVA</span></a>
+                    </li>
+                    <li class="nav-item" data-section="device-tracking">
+                        <a href="#"><i class="fas fa-desktop"></i> <span>Dispositivos</span></a>
+                    </li>
+                    <li class="nav-item" data-section="settings">
+                        <a href="#"><i class="fas fa-cog"></i> <span>Configuracion</span></a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="btn-logout" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> <span>Cerrar Sesion</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="admin-header">
+                <div class="header-left">
+                    <button class="mobile-toggle" id="mobileToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 id="pageTitle">Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <a href="index.html" class="btn btn-outline btn-sm" target="_blank">
+                        <i class="fas fa-external-link-alt"></i> Ver Tienda
+                    </a>
+                    <div class="admin-user">
+                        <span id="adminName">Admin</span>
+                        <div class="avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Sections -->
+            <div class="content-wrapper">
+                <!-- Dashboard Section -->
+                <section class="content-section active" id="section-dashboard">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon blue"><i class="fas fa-shopping-bag"></i></div>
+                            <div class="stat-info">
+                                <h3 id="statOrders">0</h3>
+                                <p>Pedidos Hoy</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon green"><i class="fas fa-dollar-sign"></i></div>
+                            <div class="stat-info">
+                                <h3 id="statRevenue">$0</h3>
+                                <p>Ventas Hoy</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon purple"><i class="fas fa-box"></i></div>
+                            <div class="stat-info">
+                                <h3 id="statProducts">0</h3>
+                                <p>Productos Activos</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon orange"><i class="fas fa-users"></i></div>
+                            <div class="stat-info">
+                                <h3 id="statCustomers">0</h3>
+                                <p>Clientes</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Pedidos Recientes</h3>
+                                <a href="#" class="link" data-goto="orders">Ver todos</a>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Pedido</th>
+                                                <th>Cliente</th>
+                                                <th>Total</th>
+                                                <th>Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="recentOrdersTable">
+                                            <tr><td colspan="4" class="text-center">Cargando...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Resumen de Ventas</h3>
+                                <select id="salesPeriod" class="select-sm">
+                                    <option value="week">Esta Semana</option>
+                                    <option value="month">Este Mes</option>
+                                    <option value="year">Este Ano</option>
+                                </select>
+                            </div>
+                            <div class="card-body">
+                                <div class="sales-summary">
+                                    <div class="sales-item">
+                                        <span class="label">Ventas Brutas</span>
+                                        <span class="value" id="grossSales">$0</span>
+                                    </div>
+                                    <div class="sales-item">
+                                        <span class="label">Neto (sin IVA)</span>
+                                        <span class="value" id="netSales">$0</span>
+                                    </div>
+                                    <div class="sales-item">
+                                        <span class="label">IVA (19%)</span>
+                                        <span class="value" id="totalIva">$0</span>
+                                    </div>
+                                    <div class="sales-item">
+                                        <span class="label">Pedidos</span>
+                                        <span class="value" id="totalOrders">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Orders Section -->
+                <section class="content-section" id="section-orders">
+                    <div class="section-header">
+                        <div class="filters">
+                            <select id="orderStatusFilter">
+                                <option value="">Todos los estados</option>
+                                <option value="pending">Pendientes</option>
+                                <option value="confirmed">Confirmados</option>
+                                <option value="preparing">En Preparacion</option>
+                                <option value="ready">Listos</option>
+                                <option value="shipped">Despachados</option>
+                                <option value="delivered">Entregados</option>
+                                <option value="cancelled">Cancelados</option>
+                            </select>
+                            <input type="date" id="orderDateFilter">
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>N Pedido</th>
+                                        <th>Fecha</th>
+                                        <th>Cliente</th>
+                                        <th>Productos</th>
+                                        <th>Total</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ordersTable">
+                                    <tr><td colspan="7" class="text-center">Cargando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Products Section -->
+                <section class="content-section" id="section-products">
+                    <div class="product-stats-grid">
+                        <div class="product-stat">
+                            <div class="stat-icon"><i class="fas fa-box"></i></div>
+                            <div class="stat-info">
+                                <h3 id="productStatsTotal">0</h3>
+                                <p>Productos Totales</p>
+                            </div>
+                        </div>
+                        <div class="product-stat">
+                            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                            <div class="stat-info">
+                                <h3 id="productStatsActive">0</h3>
+                                <p>Activos</p>
+                            </div>
+                        </div>
+                        <div class="product-stat">
+                            <div class="stat-icon"><i class="fas fa-star"></i></div>
+                            <div class="stat-info">
+                                <h3 id="productStatsFeatured">0</h3>
+                                <p>Destacados</p>
+                            </div>
+                        </div>
+                        <div class="product-stat">
+                            <div class="stat-icon"><i class="fas fa-exclamation-circle"></i></div>
+                            <div class="stat-info">
+                                <h3 id="productStatsOutOfStock">0</h3>
+                                <p>Sin Stock</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-header">
+                        <button class="btn btn-primary" id="addProductBtn">
+                            <i class="fas fa-plus"></i> Nuevo Producto
+                        </button>
+                        <div class="filters">
+                            <select id="productCategoryFilter">
+                                <option value="">Todas las categorias</option>
+                            </select>
+                            <input type="text" placeholder="Buscar producto..." id="productSearch">
+                        </div>
+                    </div>
+                    <div class="products-grid" id="adminProductsGrid">
+                        <!-- Productos se cargan dinamicamente -->
+                    </div>
+                </section>
+
+                <!-- Categories Section -->
+                <section class="content-section" id="section-categories">
+                    <div class="section-header">
+                        <button class="btn btn-primary" id="addCategoryBtn">
+                            <i class="fas fa-plus"></i> Nueva Categoria
+                        </button>
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Imagen</th>
+                                        <th>Nombre</th>
+                                        <th>Slug</th>
+                                        <th>Productos</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="categoriesTable">
+                                    <tr><td colspan="6" class="text-center">Cargando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Reviews Section -->
+                <section class="content-section" id="section-reviews">
+                    <div class="section-header">
+                        <div class="filters">
+                            <select id="reviewStatusFilter">
+                                <option value="">Todas</option>
+                                <option value="pending">Pendientes</option>
+                                <option value="approved">Aprobadas</option>
+                                <option value="rejected">Rechazadas</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Cliente</th>
+                                        <th>Producto</th>
+                                        <th>Rating</th>
+                                        <th>Comentario</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reviewsTable">
+                                    <tr><td colspan="7" class="text-center">Cargando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Customers Section -->
+                <section class="content-section" id="section-customers">
+                    <div class="section-header">
+                        <input type="text" placeholder="Buscar cliente..." id="customerSearch">
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Email</th>
+                                        <th>Telefono</th>
+                                        <th>Pedidos</th>
+                                        <th>Total Compras</th>
+                                        <th>Ultimo Pedido</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customersTable">
+                                    <tr><td colspan="7" class="text-center">Cargando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Analytics Section -->
+                <section class="content-section" id="section-analytics">
+                    <div class="analytics-header">
+                        <div class="kpi-card">
+                            <div class="kpi-icon revenue"><i class="fas fa-dollar-sign"></i></div>
+                            <div class="kpi-info">
+                                <p>Ingresos Totales</p>
+                                <h3 id="analyticsTotalRevenue">$0</h3>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon orders"><i class="fas fa-shopping-bag"></i></div>
+                            <div class="kpi-info">
+                                <p>Pedidos Totales</p>
+                                <h3 id="analyticsTotalOrders">0</h3>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon avg-order"><i class="fas fa-receipt"></i></div>
+                            <div class="kpi-info">
+                                <p>Valor Promedio Pedido</p>
+                                <h3 id="analyticsAvgOrderValue">$0</h3>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon customers"><i class="fas fa-users"></i></div>
+                            <div class="kpi-info">
+                                <p>Clientes Nuevos</p>
+                                <h3 id="analyticsNewCustomers">0</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-header">
+                        <h2>Reportes</h2>
+                        <div class="filters">
+                            <select id="analyticsPeriod">
+                                <option value="7">Últimos 7 días</option>
+                                <option value="30" selected>Últimos 30 días</option>
+                                <option value="90">Últimos 90 días</option>
+                                <option value="365">Último Año</option>
+                            </select>
+                            <button class="btn btn-outline" id="downloadPdfReport">
+                                <i class="fas fa-file-pdf"></i> Descargar PDF
+                            </button>
+                            <button class="btn btn-outline" id="downloadXlsxReport">
+                                <i class="fas fa-file-excel"></i> Descargar XLSX
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="analytics-grid-pro">
+                        <div class="card chart-card-pro large">
+                            <div class="card-header">
+                                <h3>Ventas a lo largo del Tiempo</h3>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="salesChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="card chart-card-pro">
+                            <div class="card-header">
+                                <h3>Productos más Vendidos</h3>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="topProductsChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="card chart-card-pro">
+                            <div class="card-header">
+                                <h3>Ventas por Categoría</h3>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="categoriesChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="card chart-card-pro">
+                            <div class="card-header">
+                                <h3>Crecimiento de Clientes</h3>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="customersChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="card chart-card-pro">
+                            <div class="card-header">
+                                <h3>Ventas por Comuna</h3>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="comunasChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SII Section -->
+                <section class="content-section" id="section-sii">
+                    <div class="section-header">
+                        <h2>Control Tributario SII</h2>
+                        <div class="filters">
+                            <select id="siiMonth">
+                                <option value="1">Enero</option>
+                                <option value="2">Febrero</option>
+                                <option value="3">Marzo</option>
+                                <option value="4">Abril</option>
+                                <option value="5">Mayo</option>
+                                <option value="6">Junio</option>
+                                <option value="7">Julio</option>
+                                <option value="8">Agosto</option>
+                                <option value="9">Septiembre</option>
+                                <option value="10">Octubre</option>
+                                <option value="11">Noviembre</option>
+                                <option value="12">Diciembre</option>
+                            </select>
+                            <select id="siiYear">
+                                <option value="2024">2024</option>
+                                <option value="2025">2025</option>
+                            </select>
+                            <button class="btn btn-primary" id="generateSiiReport">
+                                <i class="fas fa-file-pdf"></i> Generar Informe
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="sii-grid">
+                        <div class="card sii-summary">
+                            <div class="card-header">
+                                <h3>Resumen Mensual IVA</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="sii-stats">
+                                    <div class="sii-stat">
+                                        <span class="label">Ventas Brutas</span>
+                                        <span class="value" id="siiGross">$0</span>
+                                    </div>
+                                    <div class="sii-stat">
+                                        <span class="label">Base Imponible (Neto)</span>
+                                        <span class="value" id="siiNet">$0</span>
+                                    </div>
+                                    <div class="sii-stat highlight">
+                                        <span class="label">IVA Debito Fiscal (19%)</span>
+                                        <span class="value" id="siiIva">$0</span>
+                                    </div>
+                                    <div class="sii-stat">
+                                        <span class="label">Cantidad de Ventas</span>
+                                        <span class="value" id="siiCount">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Detalle de Ventas del Periodo</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Fecha</th>
+                                                <th>N Pedido</th>
+                                                <th>Cliente</th>
+                                                <th>Neto</th>
+                                                <th>IVA</th>
+                                                <th>Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="siiOrdersTable">
+                                            <tr><td colspan="6" class="text-center">Selecciona un periodo</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Device Tracking Section -->
+                <section class="content-section" id="section-device-tracking">
+                    <div class="section-header">
+                        <input type="text" placeholder="Buscar por User Agent..." id="deviceSearch">
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>User Agent</th>
+                                        <th>IP Address</th>
+                                        <th>Fecha y Hora</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="deviceTrackingTable">
+                                    <tr><td colspan="3" class="text-center">Cargando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Settings Section -->
+                <section class="content-section" id="section-settings">
+                    <div class="settings-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Informacion de la Tienda</h3>
+                            </div>
+                            <div class="card-body">
+                                <form id="storeSettingsForm">
+                                    <div class="form-group">
+                                        <label>Nombre de la Tienda</label>
+                                        <input type="text" id="storeName" value="Regalo Amor">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>WhatsApp</label>
+                                        <input type="text" id="storeWhatsapp" value="+56984752936">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="email" id="storeEmail" value="contacto@regaloamor.cl">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Direccion</label>
+                                        <input type="text" id="storeAddress" value="Santiago, Chile">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Configuracion de Envios</h3>
+                            </div>
+                            <div class="card-body">
+                                <form id="shippingSettingsForm">
+                                    <div class="form-group">
+                                        <label>Envio Gratis desde ($)</label>
+                                        <input type="number" id="freeShippingThreshold" value="50000">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Costo Envio por Defecto ($)</label>
+                                        <input type="number" id="defaultShipping" value="4990">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Guardar</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Cambiar Contrasena Admin</h3>
+                            </div>
+                            <div class="card-body">
+                                <form id="passwordForm">
+                                    <div class="form-group">
+                                        <label>Contrasena Actual</label>
+                                        <input type="password" id="currentPassword" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Nueva Contrasena</label>
+                                        <input type="password" id="newPassword" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Confirmar Contrasena</label>
+                                        <input type="password" id="confirmPassword" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Cambiar Contrasena</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Pedido -->
+    <div class="modal" id="orderModal">
+        <div class="modal-content modal-xl">
+            <div class="modal-header">
+                <h2><i class="fas fa-shopping-bag" style="margin-right: 10px; color: var(--primary);"></i>Detalle del Pedido</h2>
+                <button class="modal-close" onclick="closeModal('orderModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="orderModalContent">
+                <!-- Contenido del pedido -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Producto -->
+    <div class="modal" id="productModal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h2 id="productModalTitle">Nuevo Producto</h2>
+                <button class="modal-close" onclick="closeModal('productModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="productForm">
+                    <input type="hidden" id="productId">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nombre del Producto *</label>
+                            <input type="text" id="productName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Categoria *</label>
+                            <select id="productCategory" required>
+                                <option value="">Seleccionar...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripcion</label>
+                        <textarea id="productDescription" rows="3"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Precio *</label>
+                            <input type="number" id="productPrice" required min="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Precio Original (para descuento)</label>
+                            <input type="number" id="productOriginalPrice" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Descuento %</label>
+                            <input type="number" id="productDiscount" min="0" max="100" value="0">
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h4>Descuentos por Cantidad (Opcional)</h4>
+                        <div class="quantity-discounts-form" id="quantityDiscountsForm">
+                            <div class="discount-row">
+                                <input type="number" placeholder="Min. cantidad" class="qty-min">
+                                <input type="number" placeholder="% descuento" class="qty-discount">
+                                <button type="button" class="btn btn-sm btn-danger remove-discount">&times;</button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline" id="addQuantityDiscount">
+                            <i class="fas fa-plus"></i> Agregar Descuento
+                        </button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Imagen Principal (URL)</label>
+                        <input type="url" id="productImage" placeholder="https://...">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="productActive" checked> Producto Activo
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="productFeatured"> Destacado
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" onclick="closeModal('productModal')">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Producto</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Categoria -->
+    <div class="modal" id="categoryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="categoryModalTitle">Nueva Categoria</h2>
+                <button class="modal-close" onclick="closeModal('categoryModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="categoryForm">
+                    <input type="hidden" id="categoryId">
+                    <div class="form-group">
+                        <label>Nombre *</label>
+                        <input type="text" id="categoryName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Imagen (URL)</label>
+                        <input type="url" id="categoryImage" placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="categoryActive" checked> Categoria Activa
+                        </label>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" onclick="closeModal('categoryModal')">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Nuevo Pedido -->
+    <div class="modal" id="newOrderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-bell"></i> Nuevo Pedido Recibido</h2>
+                <button class="modal-close" onclick="closeModal('newOrderModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="new-order-info">
+                    <p><strong>Pedido:</strong> <span id="newOrderNumber"></span></p>
+                    <p><strong>Cliente:</strong> <span id="newOrderCustomer"></span></p>
+                    <p><strong>Total:</strong> <span id="newOrderTotal"></span></p>
+                </div>
+                <div class="text-center" style="margin-top: 20px;">
+                    <a href="#" class="btn btn-primary" data-goto="orders" onclick="closeModal('newOrderModal')">
+                        Ver Pedidos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
