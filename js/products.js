@@ -465,12 +465,16 @@ const Products = {
         const quantityDiscountsSection = document.getElementById('modalQuantityDiscounts');
         const quantityDiscountsList = document.getElementById('quantityDiscountsList');
 
+        console.log('🔍 DEBUG - Descuentos del producto:', product.quantity_discounts);
+
         if (product.quantity_discounts && product.quantity_discounts.length > 0) {
+            console.log('✅ Mostrando', product.quantity_discounts.length, 'descuentos');
             quantityDiscountsList.innerHTML = product.quantity_discounts.map(d => `
                 <li><i class="fas fa-check"></i> ${d.min_quantity}+ unidades: <strong>${d.discount_percentage}% descuento</strong></li>
             `).join('');
             quantityDiscountsSection.style.display = 'block';
         } else {
+            console.log('❌ NO hay descuentos para este producto');
             quantityDiscountsSection.style.display = 'none';
         }
 
@@ -489,8 +493,16 @@ const Products = {
         const qty = parseInt(document.getElementById('productQty').value) || 1;
         let price = this.currentProduct.price;
 
+        console.log('💰 DEBUG - Actualizando precio:', {
+            cantidad: qty,
+            precioOriginal: price,
+            tieneDescuentos: !!this.currentProduct.quantity_discounts?.length
+        });
+
         if (this.currentProduct.quantity_discounts && this.currentProduct.quantity_discounts.length > 0) {
-            price = Utils.calculateQuantityDiscount(price, qty, this.currentProduct.quantity_discounts);
+            const newPrice = Utils.calculateQuantityDiscount(price, qty, this.currentProduct.quantity_discounts);
+            console.log('💰 Precio con descuento:', newPrice);
+            price = newPrice;
         }
 
         document.getElementById('modalPrice').textContent = Utils.formatPrice(price);
@@ -499,6 +511,7 @@ const Products = {
         if (price < this.currentProduct.price) {
             const savings = this.currentProduct.price - price;
             const savingsPercent = Math.round((savings / this.currentProduct.price) * 100);
+            console.log('✅ Mostrando badge de descuento:', savingsPercent + '%');
             document.getElementById('modalDiscount').textContent = `-${savingsPercent}%`;
             document.getElementById('modalDiscount').style.display = 'inline';
         }
