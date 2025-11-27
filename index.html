@@ -545,6 +545,10 @@
             <a href="#productos" class="btn btn-outline" id="continueShoppingEmpty">Ver Productos</a>
         </div>
         <div class="cart-footer" id="cartFooter">
+            <div class="cart-savings" id="cartSavings" style="display: none;">
+                <span>✨ Ahorro total:</span>
+                <span id="cartSavingsAmount" class="savings-amount">$0</span>
+            </div>
             <div class="cart-subtotal">
                 <span>Subtotal:</span>
                 <span id="cartSubtotal">$0</span>
@@ -688,6 +692,10 @@
                     <h3>Resumen del Pedido</h3>
                     <div class="order-summary" id="orderSummary"></div>
                     <div class="order-totals">
+                        <div class="total-row savings-row" id="summarySavingsRow" style="display: none;">
+                            <span>✨ Ahorro por descuento:</span>
+                            <span id="summarySavings" class="savings-amount">$0</span>
+                        </div>
                         <div class="total-row">
                             <span>Subtotal:</span>
                             <span id="summarySubtotal">$0</span>

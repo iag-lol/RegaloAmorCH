@@ -168,6 +168,16 @@ const Cart = {
         return this.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     },
 
+    getTotalSavings() {
+        return this.items.reduce((sum, item) => {
+            if (item.originalPrice && item.price < item.originalPrice) {
+                const savings = (item.originalPrice - item.price) * item.quantity;
+                return sum + savings;
+            }
+            return sum;
+        }, 0);
+    },
+
     getItemCount() {
         return this.items.reduce((sum, item) => sum + item.quantity, 0);
     },
@@ -247,7 +257,13 @@ const Cart = {
                 <div class="cart-item-details">
                     <h4 class="cart-item-name">${item.name}</h4>
                     ${this.renderCustomization(item.customization)}
-                    <span class="cart-item-price">${Utils.formatPrice(item.price)}</span>
+                    <div class="cart-item-pricing">
+                        ${item.originalPrice && item.price < item.originalPrice ? `
+                            <span class="cart-item-original-price">${Utils.formatPrice(item.originalPrice)}</span>
+                            <span class="cart-item-discount-badge">-${Math.round((1 - item.price / item.originalPrice) * 100)}% DTO</span>
+                        ` : ''}
+                        <span class="cart-item-price">${Utils.formatPrice(item.price)}</span>
+                    </div>
                     <div class="cart-item-qty">
                         <button class="qty-decrease" data-item-id="${item.itemId}">-</button>
                         <span>${item.quantity}</span>
@@ -306,6 +322,20 @@ const Cart = {
         if (subtotalElement) {
             subtotalElement.textContent = Utils.formatPrice(this.getSubtotal());
         }
+
+        // Mostrar ahorro total si hay descuentos
+        const savings = this.getTotalSavings();
+        const savingsContainer = document.getElementById('cartSavings');
+        const savingsAmount = document.getElementById('cartSavingsAmount');
+
+        if (savingsContainer && savingsAmount) {
+            if (savings > 0) {
+                savingsAmount.textContent = Utils.formatPrice(savings);
+                savingsContainer.style.display = 'flex';
+            } else {
+                savingsContainer.style.display = 'none';
+            }
+        }
     },
 
     // =====================================================
@@ -359,16 +389,29 @@ const Cart = {
         const subtotal = this.getSubtotal();
         const shipping = this.getShipping(comuna);
         const total = subtotal + shipping;
+        const savings = this.getTotalSavings();
 
         const subtotalEl = document.getElementById('summarySubtotal');
         const shippingEl = document.getElementById('summaryShipping');
         const shippingComunaEl = document.getElementById('shippingComuna');
         const totalEl = document.getElementById('summaryTotal');
+        const savingsEl = document.getElementById('summarySavings');
+        const savingsRowEl = document.getElementById('summarySavingsRow');
 
         if (subtotalEl) subtotalEl.textContent = Utils.formatPrice(subtotal);
         if (shippingEl) shippingEl.textContent = shipping === 0 ? 'GRATIS' : Utils.formatPrice(shipping);
         if (shippingComunaEl) shippingComunaEl.textContent = comuna || '-';
         if (totalEl) totalEl.textContent = Utils.formatPrice(total);
+
+        // Mostrar ahorro si existe
+        if (savingsEl && savingsRowEl) {
+            if (savings > 0) {
+                savingsEl.textContent = Utils.formatPrice(savings);
+                savingsRowEl.style.display = 'flex';
+            } else {
+                savingsRowEl.style.display = 'none';
+            }
+        }
     },
 
     async handleCheckout(e) {
