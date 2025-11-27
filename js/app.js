@@ -194,7 +194,7 @@ const App = {
 
                 searchResults.innerHTML = products.map(product => `
                     <div class="search-result-item" data-product-id="${product.id}">
-                        <img src="${product.images?.[0]?.url || 'https://via.placeholder.com/60'}" alt="${product.name}">
+                        <img src="${product.images?.[0]?.url || 'https://placehold.co/60x60/e5e7eb/6b7280?text=Producto'}" alt="${product.name}">
                         <div class="search-result-info">
                             <h4>${product.name}</h4>
                             <span>${Utils.formatPrice(product.price)}</span>

@@ -308,7 +308,7 @@ const Products = {
     renderProductCard(product) {
         const hasDiscount = product.discount > 0;
         // Compatibilidad: imágenes pueden venir como objetos {url}, array de strings o string suelta
-        const placeholderImg = 'https://via.placeholder.com/300?text=Producto';
+        const placeholderImg = 'https://placehold.co/300x300/e5e7eb/6b7280?text=Producto';
         const images = product.images;
         let mainImage = product.image || placeholderImg;
 
@@ -379,7 +379,7 @@ const Products = {
         if (!modal) return;
 
         // Imagen principal (soporta array de strings, array de objetos o string suelta)
-        const placeholderImg = 'https://via.placeholder.com/500?text=Producto';
+        const placeholderImg = 'https://placehold.co/500x500/e5e7eb/6b7280?text=Producto';
         const images = product.images;
         let mainImage = product.image || placeholderImg;
 

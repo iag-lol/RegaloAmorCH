@@ -416,7 +416,7 @@ function viewOrder(id) {
             ${order.items ? order.items.map((item, idx) => `
                 <div class="order-item-row">
                     <div class="order-item-image">
-                        <img src="${item.image || 'https://via.placeholder.com/60'}" alt="${item.name}">
+                        <img src="${item.image || 'https://placehold.co/60x60/e5e7eb/6b7280?text=Producto'}" alt="${item.name}">
                     </div>
                     <div class="order-item-details">
                         <div class="order-item-name">${item.name}</div>
@@ -1044,7 +1044,7 @@ async function handleProductSaveAdvanced(e) {
     }
 
     // Obtener imagen principal
-    const mainImage = document.getElementById('productImage').value || 'https://via.placeholder.com/300';
+    const mainImage = document.getElementById('productImage').value || 'https://placehold.co/300x300/e5e7eb/6b7280?text=Producto';
 
     // Combinar imagen principal con imagenes adicionales
     const allImages = [mainImage, ...additionalImages];
@@ -1372,7 +1372,7 @@ async function handleCategorySave(e) {
             .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
             .replace(/[^a-z0-9\s-]/g, '')
             .replace(/\s+/g, '-'),
-        image: document.getElementById('categoryImage').value || 'https://via.placeholder.com/100',
+        image: document.getElementById('categoryImage').value || 'https://placehold.co/100x100/e5e7eb/6b7280?text=Categoria',
         active: document.getElementById('categoryActive').checked,
         position: AdminState.categories.length + 1
     };

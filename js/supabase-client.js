@@ -445,7 +445,7 @@ async function addDeviceTracking() {
 async function uploadProductImage(file) {
     if (!supabase) {
         console.log('Subida de imagen (demo):', file.name);
-        return { success: true, url: 'https://via.placeholder.com/300' };
+        return { success: true, url: 'https://placehold.co/300x300/e5e7eb/6b7280?text=Producto' };
     }
 
     try {

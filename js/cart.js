@@ -117,7 +117,7 @@ const Cart = {
                 name: product.name,
                 price: finalPrice,
                 originalPrice: product.price,
-                image: product.images?.[0]?.url || 'https://via.placeholder.com/100',
+                image: product.images?.[0]?.url || 'https://placehold.co/100x100/e5e7eb/6b7280?text=Sin+Imagen',
                 quantity,
                 customization,
                 quantity_discounts: product.quantity_discounts || []
