@@ -60,7 +60,8 @@ async function getProducts(options = {}) {
                 *,
                 category:categories(id, name, slug),
                 images:product_images(id, url, position),
-                reviews:reviews(rating)
+                reviews:reviews(rating),
+                quantity_discounts:product_quantity_discounts(min_quantity, discount_percentage)
             `)
             .eq('active', active);
 

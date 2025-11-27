@@ -826,11 +826,20 @@ function openProductModal(product = null) {
                 </div>
 
                 <div id="quantityDiscountsContainer" class="quantity-discounts-container">
-                    <div class="quantity-discount-row">
-                        <input type="number" placeholder="Desde (uds)" class="qty-min" value="3">
-                        <input type="number" placeholder="% Dcto" class="qty-discount" value="10">
-                        <button type="button" class="btn-remove-qty" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
-                    </div>
+                    ${product?.quantity_discounts && product.quantity_discounts.length > 0
+                        ? product.quantity_discounts.map(disc => `
+                            <div class="quantity-discount-row">
+                                <input type="number" placeholder="Desde (uds)" class="qty-min" value="${disc.min_quantity}">
+                                <input type="number" placeholder="% Dcto" class="qty-discount" value="${disc.discount_percentage}">
+                                <button type="button" class="btn-remove-qty" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+                            </div>
+                        `).join('')
+                        : `<div class="quantity-discount-row">
+                            <input type="number" placeholder="Desde (uds)" class="qty-min" value="">
+                            <input type="number" placeholder="% Dcto" class="qty-discount" value="">
+                            <button type="button" class="btn-remove-qty" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+                        </div>`
+                    }
                 </div>
                 <button type="button" class="btn-add-qty" onclick="addQuantityDiscountRowAdvanced()">
                     <i class="fas fa-plus"></i> Agregar descuento por cantidad
@@ -1044,6 +1053,20 @@ async function handleProductSaveAdvanced(e) {
     const categoryName = document.getElementById('productCategory').value;
     const categoryObj = AdminState.categories.find(c => c.name === categoryName);
 
+    // Recolectar descuentos por cantidad
+    const quantityDiscounts = [];
+    const discountRows = document.querySelectorAll('#quantityDiscountsContainer .quantity-discount-row');
+    discountRows.forEach(row => {
+        const minQty = parseInt(row.querySelector('.qty-min')?.value);
+        const discountPct = parseInt(row.querySelector('.qty-discount')?.value);
+        if (minQty && discountPct && minQty > 0 && discountPct > 0) {
+            quantityDiscounts.push({
+                min_quantity: minQty,
+                discount_percentage: discountPct
+            });
+        }
+    });
+
     try {
         if (supabase) {
             // Datos para Supabase
@@ -1082,6 +1105,17 @@ async function handleProductSaveAdvanced(e) {
                     await supabase.from('product_images').insert(imageInserts);
                 }
 
+                // Actualizar descuentos por cantidad (eliminar antiguos y agregar nuevos)
+                await supabase.from('product_quantity_discounts').delete().eq('product_id', parseInt(id));
+
+                if (quantityDiscounts.length > 0) {
+                    const discountInserts = quantityDiscounts.map(disc => ({
+                        product_id: parseInt(id),
+                        ...disc
+                    }));
+                    await supabase.from('product_quantity_discounts').insert(discountInserts);
+                }
+
                 // Actualizar estado local
                 const index = AdminState.products.findIndex(p => p.id === parseInt(id));
                 if (index > -1) {
@@ -1091,7 +1125,8 @@ async function handleProductSaveAdvanced(e) {
                         category: { id: categoryObj?.id, name: categoryName, slug: categoryObj?.slug },
                         images: allImages.map((url, i) => ({ url: resolveAdminImage(url), position: i })),
                         image: resolveAdminImage(allImages[0]),
-                        sales_count: AdminState.products[index].sales_count || 0
+                        sales_count: AdminState.products[index].sales_count || 0,
+                        quantity_discounts: quantityDiscounts
                     };
                     AdminState.products[index] = localData;
                 }
@@ -1116,13 +1151,23 @@ async function handleProductSaveAdvanced(e) {
                     await supabase.from('product_images').insert(imageInserts);
                 }
 
+                // Insertar descuentos por cantidad
+                if (quantityDiscounts.length > 0) {
+                    const discountInserts = quantityDiscounts.map(disc => ({
+                        product_id: data.id,
+                        ...disc
+                    }));
+                    await supabase.from('product_quantity_discounts').insert(discountInserts);
+                }
+
                 // Agregar al estado local
                 const localData = {
                     ...data,
                     category: { id: categoryObj?.id, name: categoryName, slug: categoryObj?.slug },
                     images: allImages.map((url, i) => ({ url: resolveAdminImage(url), position: i })),
                     image: resolveAdminImage(allImages[0]),
-                    sales_count: 0
+                    sales_count: 0,
+                    quantity_discounts: quantityDiscounts
                 };
                 AdminState.products.push(localData);
             }
@@ -1142,7 +1187,8 @@ async function handleProductSaveAdvanced(e) {
                 active: document.getElementById('productActive').checked,
                 featured: document.getElementById('productFeatured').checked,
                 stock: stock,
-                sales_count: 0
+                sales_count: 0,
+                quantity_discounts: quantityDiscounts
             };
 
             if (id) {
