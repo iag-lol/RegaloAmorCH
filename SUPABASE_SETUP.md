@@ -32,6 +32,24 @@ FOR SELECT TO authenticated USING (true);
 
 **Script completo:** Ver archivo `supabase/FIX_RLS.sql`
 
+### Descuentos por Cantidad No Se Guardan
+
+Si configuraste descuentos en el admin pero no se guardan:
+
+```sql
+-- Ejecuta esto en SQL Editor
+CREATE POLICY "allow_authenticated_insert_discounts"
+ON product_quantity_discounts FOR INSERT TO authenticated WITH CHECK (true);
+
+CREATE POLICY "allow_authenticated_update_discounts"
+ON product_quantity_discounts FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
+
+CREATE POLICY "allow_authenticated_delete_discounts"
+ON product_quantity_discounts FOR DELETE TO authenticated USING (true);
+```
+
+**Script completo:** Ver archivo `supabase/FIX_DISCOUNTS.sql`
+
 ---
 
 ## 1. Configurar Storage (Bucket de Imágenes)
@@ -208,6 +226,15 @@ Error: new row violates row-level security policy for table "orders"
 **Solución:** Ejecuta `supabase/FIX_RLS.sql` completo en SQL Editor
 
 **Causa:** Las políticas de RLS están bloqueando que usuarios anónimos (clientes) creen pedidos.
+
+---
+
+### ⚠️ Los descuentos por cantidad no se guardan
+**Síntoma:** Configuras descuentos en admin pero al guardar el producto no aparecen
+
+**Solución:** Ejecuta `supabase/FIX_DISCOUNTS.sql` en SQL Editor
+
+**Causa:** Falta política de INSERT para product_quantity_discounts
 
 ---
 
