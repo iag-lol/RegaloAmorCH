@@ -2336,6 +2336,36 @@ body {
     transform: scale(1.1);
 }
 
+/* Upload loading state */
+.upload-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--primary);
+}
+
+.upload-loading i {
+    font-size: 48px;
+    animation: spin 1s linear infinite;
+}
+
+.upload-loading span {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--gray-600);
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 /* Toggle Options */
 .toggle-options {
     display: flex;

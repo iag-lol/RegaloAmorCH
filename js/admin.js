@@ -1912,6 +1912,53 @@ async function downloadCustomerImage(imageUrl, filename) {
 // Estado para imagenes adicionales
 let additionalImages = [];
 
+// =====================================================
+// Subida de imagenes a Supabase Storage
+// =====================================================
+
+async function uploadImageToSupabase(file, productId = null) {
+    if (!AdminState.supabase) {
+        // Modo demo: convertir a base64
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result);
+            reader.readAsDataURL(file);
+        });
+    }
+
+    try {
+        // Generar nombre unico para el archivo
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const filePath = productId ? `products/${productId}/${fileName}` : `products/${fileName}`;
+
+        // Subir archivo al bucket
+        const { data, error } = await AdminState.supabase.storage
+            .from('product-images')
+            .upload(filePath, file, {
+                cacheControl: '3600',
+                upsert: false
+            });
+
+        if (error) {
+            console.error('Error uploading to Supabase Storage:', error);
+            showToast('Error al subir imagen: ' + error.message, 'error');
+            return null;
+        }
+
+        // Obtener URL publica
+        const { data: urlData } = AdminState.supabase.storage
+            .from('product-images')
+            .getPublicUrl(filePath);
+
+        return urlData.publicUrl;
+    } catch (error) {
+        console.error('Error uploading image:', error);
+        showToast('Error al procesar imagen', 'error');
+        return null;
+    }
+}
+
 function initImageUpload(existingImages = []) {
     const mainUploadArea = document.getElementById('mainImageUpload');
     const additionalImagesGrid = document.getElementById('additionalImagesGrid');
@@ -1970,7 +2017,7 @@ function initImageUpload(existingImages = []) {
     }
 }
 
-function handleMainImageFile(file) {
+async function handleMainImageFile(file) {
     // Validar tamano (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
         showToast('La imagen no debe superar 5MB', 'error');
@@ -1983,26 +2030,41 @@ function handleMainImageFile(file) {
         return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        const imageData = e.target.result;
+    // Mostrar loading
+    const mainUploadArea = document.getElementById('mainImageUpload');
+    mainUploadArea.innerHTML = `
+        <div class="upload-loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Subiendo imagen...</span>
+        </div>
+    `;
 
-        // Actualizar preview
-        const mainUploadArea = document.getElementById('mainImageUpload');
+    // Subir imagen a Supabase Storage
+    const imageUrl = await uploadImageToSupabase(file);
+
+    if (!imageUrl) {
+        // Revertir a estado inicial si falla
         mainUploadArea.innerHTML = `
-            <img src="${imageData}" alt="Preview" class="image-preview">
-            <div class="image-upload-overlay">
-                <i class="fas fa-camera"></i>
-                <span>Cambiar imagen</span>
-            </div>
+            <i class="fas fa-cloud-upload-alt"></i>
+            <span>Arrastra una imagen o haz clic</span>
+            <small>JPG, PNG hasta 5MB</small>
         `;
+        return;
+    }
 
-        // Guardar en el input de texto
-        document.getElementById('productImage').value = imageData;
+    // Actualizar preview con la URL
+    mainUploadArea.innerHTML = `
+        <img src="${imageUrl}" alt="Preview" class="image-preview">
+        <div class="image-upload-overlay">
+            <i class="fas fa-camera"></i>
+            <span>Cambiar imagen</span>
+        </div>
+    `;
 
-        showToast('Imagen cargada correctamente', 'success');
-    };
-    reader.readAsDataURL(file);
+    // Guardar URL en el input de texto
+    document.getElementById('productImage').value = imageUrl;
+
+    showToast('Imagen cargada correctamente', 'success');
 }
 
 function renderAdditionalImages() {
@@ -2056,7 +2118,7 @@ function openAdditionalImagePicker() {
     additionalFileInput.click();
 }
 
-function handleAdditionalImageFile(file) {
+async function handleAdditionalImageFile(file) {
     // Validar tamano (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
         showToast('La imagen no debe superar 5MB', 'error');
@@ -2075,13 +2137,19 @@ function handleAdditionalImageFile(file) {
         return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        additionalImages.push(e.target.result);
-        renderAdditionalImages();
-        showToast('Imagen adicional agregada', 'success');
-    };
-    reader.readAsDataURL(file);
+    // Mostrar toast de carga
+    showToast('Subiendo imagen...', 'info');
+
+    // Subir imagen a Supabase Storage
+    const imageUrl = await uploadImageToSupabase(file);
+
+    if (!imageUrl) {
+        return;
+    }
+
+    additionalImages.push(imageUrl);
+    renderAdditionalImages();
+    showToast('Imagen adicional agregada', 'success');
 }
 
 function removeAdditionalImage(index) {
