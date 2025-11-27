@@ -1,5 +1,39 @@
 # Configuración de Supabase para Regalo Amor
 
+## ⚠️ CRÍTICO: Arreglar RLS para Pedidos (EJECUTAR PRIMERO)
+
+**Si ves error 401 al crear pedidos**, ejecuta esto inmediatamente:
+
+### Solución Rápida
+Ve a **SQL Editor** en Supabase y ejecuta:
+
+```sql
+-- Eliminar políticas conflictivas
+DROP POLICY IF EXISTS "Permitir crear pedidos" ON orders;
+DROP POLICY IF EXISTS "Admin full access orders" ON orders;
+DROP POLICY IF EXISTS "Permitir crear items de pedido" ON order_items;
+
+-- Crear políticas correctas
+CREATE POLICY "allow_anonymous_insert_orders" ON orders
+FOR INSERT TO anon, authenticated WITH CHECK (true);
+
+CREATE POLICY "allow_authenticated_select_orders" ON orders
+FOR SELECT TO authenticated USING (true);
+
+CREATE POLICY "allow_authenticated_update_orders" ON orders
+FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
+
+CREATE POLICY "allow_anonymous_insert_order_items" ON order_items
+FOR INSERT TO anon, authenticated WITH CHECK (true);
+
+CREATE POLICY "allow_authenticated_select_order_items" ON order_items
+FOR SELECT TO authenticated USING (true);
+```
+
+**Script completo:** Ver archivo `supabase/FIX_RLS.sql`
+
+---
+
 ## 1. Configurar Storage (Bucket de Imágenes)
 
 ### Crear el Bucket
@@ -163,6 +197,19 @@ product-images/
 ```
 
 ## Troubleshooting
+
+### ⚠️ Error: "401 Unauthorized" al crear pedidos
+**Síntoma:** No se pueden completar pedidos, error en consola:
+```
+POST https://xxx.supabase.co/rest/v1/orders 401 (Unauthorized)
+Error: new row violates row-level security policy for table "orders"
+```
+
+**Solución:** Ejecuta `supabase/FIX_RLS.sql` completo en SQL Editor
+
+**Causa:** Las políticas de RLS están bloqueando que usuarios anónimos (clientes) creen pedidos.
+
+---
 
 ### Error: "new row violates row-level security policy"
 → Ejecuta los comandos de RLS de la sección 2
